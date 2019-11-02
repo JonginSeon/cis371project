@@ -63,9 +63,9 @@ export default {
     },
 
     created(){
-      
+
+        
           if(firebase.auth().currentUser){
-         
             this.currentUser = firebase.auth().currentUser.email;
             this.userEmail =   this.currentUser.split("@")
             this.userList='User/'+this.userEmail[0];

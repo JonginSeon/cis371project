@@ -107,7 +107,7 @@ export default {
                 })
 
                 AppDB.ref('Books/' + uID).remove();
-                this.$router.push("/");
+                this.$router.push("/admin");
             }
         }      
     }
