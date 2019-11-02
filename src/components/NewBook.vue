@@ -19,17 +19,9 @@
     </form>
 </template>
 
-
-
-
-
-
-
-
-
 <script>
 import {AppDB} from './firebaseInit'
-import firebase from 'firebase';
+// import firebase from 'firebase';
 export default {
     name: 'new-book',
     data(){
@@ -49,14 +41,14 @@ export default {
         saveBook(){
 
           
-          if(firebase.auth().currentUser){
+        //   if(firebase.auth().currentUser){
          
-            this.currentUser = firebase.auth().currentUser.email;
-        }
-                this.userEmail =   this.currentUser.split("@")
-          this.userList='User/'+this.userEmail[0];
+        //     this.currentUser = firebase.auth().currentUser.email;
+        // }
+        //         this.userEmail =   this.currentUser.split("@")
+        //   this.userList='User/'+this.userEmail[0];
 
-          AppDB.ref( this.userList).push().set({
+          AppDB.ref( 'Books').push().set({
                 ID: this.book_id,
                 title: this.title,
                 author: this.author,
@@ -64,7 +56,7 @@ export default {
                 published: this.published,
                 bookCount: this.bookCount
             })
-            .then(() => { this.$router.push('/') })
+            .then(() => { this.$router.push('/admin') })
             .catch()
         }
     },

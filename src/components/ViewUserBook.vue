@@ -61,13 +61,9 @@ export default {
     beforeRouteEnter(to, from, next){
 
 
-          if(firebase.auth().currentUser){
-         
-            this.currentUser = firebase.auth().currentUser.email;
-            this.userEmail =   this.currentUser.split("@")
-            this.userList='User/'+this.userEmail[0];
+        
 
-        AppDB.ref(this.userList).on('value', (snapshot) => {
+        AppDB.ref('Books').on('value', (snapshot) => {
             const data = snapshot.val();
             const keys = Object.keys(data);
 
@@ -88,14 +84,24 @@ export default {
                 vm.bookCount = find.bookCount;
             })
         })
-     }
+     
     },
     methods: {
         deleteBook(){
+
+  if(firebase.auth().currentUser){
             if(confirm('Are you sure you want to delete this book?')){
-                alert(this.currentUser)
+
+              
+         
+            this.currentUser = firebase.auth().currentUser.email;
+            this.userEmail =   this.currentUser.split("@")
+            this.userList='User/'+this.userEmail[0];
+
+
+                // alert(this.currentUser)
                 let uID;
-                 AppDB.ref('Books').on('value', (snapshot)=>{
+                 AppDB.ref(this.userList).on('value', (snapshot)=>{
                     const data = snapshot.val();
                     const keys = Object.keys(data);
                     
@@ -111,6 +117,7 @@ export default {
 
                 AppDB.ref('Books/' + uID).remove();
                 this.$router.push("/");
+              }
             }
         }      
     }
