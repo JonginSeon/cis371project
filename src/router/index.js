@@ -3,10 +3,12 @@ import Router from 'vue-router'
 import Dashboard from '@/components/Dashboard'
 import NewBook from '@/components/NewBook'
 import ViewBook from '@/components/ViewBook'
+import ViewUserBook from '@/components/ViewUserBook'
 import EditBook from '@/components/EditBook'
 import auth from  '@/components/Auth'
 import register from  '@/components/Register'
 import firebase from 'firebase';
+import admin from  '@/components/User'
 
 Vue.use(Router)
 
@@ -20,6 +22,15 @@ let router = new Router({
         requiresAuth: true
       }
     },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: admin,
+      meta: {
+        requiresAuth: true
+      }
+    },
+
     {
       path: '/auth',
       name: 'auth',
@@ -56,6 +67,15 @@ let router = new Router({
       path: '/:book_id',
       name: 'view-book',
       component: ViewBook,
+      meta: {
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/userNewBook',
+      name: 'user-new-book',
+      component: ViewUserBook,
       meta: {
         requiresAuth: true
       }

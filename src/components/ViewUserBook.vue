@@ -1,7 +1,8 @@
 
 <template>
+
   <v-card  id="card" class="mx-auto" max-width="400" tile>
-      
+       <h1>{{currentUser}}</h1>
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title>Book ID:  {{ID}}</v-list-item-title>
@@ -40,8 +41,10 @@
 </template>
 <script>
 import {AppDB} from './firebaseInit'
+import firebase from 'firebase';
+
 export default {
-    name: 'view-book',
+    name: 'user-new-book',
     data(){
         return{
             ID: null,
@@ -49,11 +52,22 @@ export default {
             author: null,
             genre: null,
             published: null,
-            bookCount: null
+            bookCount: null,
+            currentUser: false,
+            userEmail:[],
+            userList:''
         }
     },
     beforeRouteEnter(to, from, next){
-        AppDB.ref('Books').on('value', (snapshot) => {
+
+
+          if(firebase.auth().currentUser){
+         
+            this.currentUser = firebase.auth().currentUser.email;
+            this.userEmail =   this.currentUser.split("@")
+            this.userList='User/'+this.userEmail[0];
+
+        AppDB.ref(this.userList).on('value', (snapshot) => {
             const data = snapshot.val();
             const keys = Object.keys(data);
 
@@ -74,10 +88,12 @@ export default {
                 vm.bookCount = find.bookCount;
             })
         })
+     }
     },
     methods: {
         deleteBook(){
             if(confirm('Are you sure you want to delete this book?')){
+                alert(this.currentUser)
                 let uID;
                  AppDB.ref('Books').on('value', (snapshot)=>{
                     const data = snapshot.val();

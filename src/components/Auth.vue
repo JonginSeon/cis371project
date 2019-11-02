@@ -1,28 +1,10 @@
 <template>
- <div>
-   <div class="container">
-   <div class="row">
-     <div class="col s12 m8 offset-m2">
-       <div class="login card-panel blue white-text center">
-         <h3>Login</h3>
-         <form action="index.html">
-           <div class="input-field">
-             <i class="material-icons prefix">email</i>
-             <input class= "white-text" type="email" id="email" v-model="email">
-             <label class="white-text" for="email">Email Address</label>
-           </div>
-           <div class="input-field">
-             <i class="material-icons prefix">lock</i>
-             <input type="password" id="password" v-model="password">
-             <label class="white-text" for="password">Password</label>
-           </div>
-           <button v-on:click="login" class="btn btn-large btn-extended grey lighten-4 black-text">Login</button>
-         </form>
-       </div>
-     </div>
-   </div>
- </div>
- </div>
+
+ <v-form >
+      <v-text-field label="Username/Email" v-model="email"></v-text-field>
+      <v-text-field type="password" label="password" v-model="password"></v-text-field>
+      <v-btn v-on:click="login" >Login</v-btn>
+</v-form>
 </template>
 
 <script>
@@ -42,6 +24,11 @@ export default {
        .signInWithEmailAndPassword(this.email, this.password)
        .then(
          () => {
+            if(this.email==="admin@mail.gvsu.edu"){
+             // alert("Hello Admin");
+             this.$router.push('/admin')
+            }
+
            //alert(`You are logged in as ${this.email}`);
            this.$router.go({ path: this.$router.path });
          },

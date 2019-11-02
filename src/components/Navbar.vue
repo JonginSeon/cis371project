@@ -1,19 +1,30 @@
 <template>
-    <nav>
-        <div class="nav-wrapper blue">
-            <div class="container">
-                <router-link to="/" class="brand-logo"><i class="fa fa-book white-text"></i>Library Admin</router-link>
-                <ul class="right">
-                    <li v-if="isLoggedIn"><span class="email white-text">{{currentUser}}</span></li>
-                    <li v-if="isLoggedIn"><router-link to="/">Home</router-link></li>
-                    <li v-if="!isLoggedIn"><router-link to="/auth">Login</router-link></li>
-                    <li v-if="!isLoggedIn"><router-link to="/register">Sign Up</router-link></li>
-                    <li v-if="isLoggedIn"><button v-on:click="logout" class="btn white black-text">Logout</button></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <v-toolbar class="blue">
+        <v-spacer></v-spacer>
+
+        <v-toolbar-title color= "blue" class="headline text-uppercase">
+            <span>GVSU </span>
+            <router-link to="/" class="router"><span class="font-weight-light">Library Admin</span></router-link>
+        </v-toolbar-title>
+
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+
+        <v-toolbar-items>
+            <v-btn text v-if="isLoggedIn" ><span class="email white-text">{{currentUser}}</span></v-btn>
+            <v-btn text v-if="isLoggedIn"><router-link class="router" to="/">Home</router-link></v-btn>
+            <v-btn text v-if="!isLoggedIn"><router-link class="router"  to="/auth">Login</router-link></v-btn>
+            <v-btn text v-if="!isLoggedIn"><router-link class="router"  to="/register">Sign Up</router-link></v-btn>
+            <v-btn text v-if="isLoggedIn"><button v-on:click="logout" class="btn white black-text">Logout</button></v-btn>
+        </v-toolbar-items>
+        <v-spacer></v-spacer>
+
+    </v-toolbar>
 </template>
+
 
 
 <script>
@@ -48,4 +59,10 @@ export default {
 .email{
     padding-right: 10px;
 }
+
+.router{
+      text-decoration: none; 
+}
 </style>
+
+

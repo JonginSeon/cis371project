@@ -1,53 +1,35 @@
+
 <template>
-    <div id="new-book">
-        <h3>New Library Addition</h3>
-        <div class="row">
-            <form @submit.prevent="saveBook" class="col s12">
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input type="text" v-model="book_id" required>
-                        <label>Book ID</label>
-                    </div>
-                </div>
-                 <div class="row">
-                    <div class="input-field col s12">
-                        <input type="text" v-model="title" required>
-                        <label>Title</label>
-                    </div>
-                </div>
-                 <div class="row">
-                    <div class="input-field col s12">
-                        <input type="text" v-model="author" required>
-                        <label>Author</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input type="text" v-model="published" required>
-                        <label>Date Published</label>
-                    </div>
-                </div>
-                 <div class="row">
-                    <div class="input-field col s12">
-                        <input type="text" v-model="genre" required>
-                        <label>Genre</label>
-                    </div>
-                </div>
-                 <div class="row">
-                    <div class="input-field col s12">
-                        <input type="text" v-model="bookCount" required>
-                        <label>Stock</label>
-                    </div>
-                </div>
-                <button type="submit" class="btn green">Submit</button>
-                <router-link to="/" class="btn red">Cancel</router-link>
-            </form>
-        </div>
-    </div>
+ <form @submit.prevent="saveBook" >
+  <v-container fluid>
+    <v-row>
+      <v-col cols="12" sm="6">
+        <v-text-field v-model="book_id"  label="Book ID" >   </v-text-field>
+        <v-text-field v-model="title" label="Title">  </v-text-field>
+        <v-text-field v-model="author" label="Author">    </v-text-field>
+        <v-text-field v-model="published" label="Date Published">    </v-text-field>
+        <v-text-field v-model="genre" label="Genre">    </v-text-field>
+        <v-text-field v-model="bookCount" label="Stock">    </v-text-field>
+        <v-btn class="button" type="submit"> Submit</v-btn>
+        <v-btn class="button"> <router-link  to="/" class="router">Cancel</router-link> </v-btn>
+      </v-col>
+    </v-row>
+
+  </v-container>
+    </form>
 </template>
+
+
+
+
+
+
+
+
 
 <script>
 import {AppDB} from './firebaseInit'
+import firebase from 'firebase';
 export default {
     name: 'new-book',
     data(){
@@ -57,12 +39,24 @@ export default {
             author: null,
             genre: null,
             published: null,
-            bookCount: null
+            bookCount: null,
+            currentUser:false,
+            userEmail:[],
+            userList:''
         }
     },
     methods: {
         saveBook(){
-            AppDB.ref('Books').push().set({
+
+          
+          if(firebase.auth().currentUser){
+         
+            this.currentUser = firebase.auth().currentUser.email;
+        }
+                this.userEmail =   this.currentUser.split("@")
+          this.userList='User/'+this.userEmail[0];
+
+          AppDB.ref( this.userList).push().set({
                 ID: this.book_id,
                 title: this.title,
                 author: this.author,
@@ -71,8 +65,20 @@ export default {
                 bookCount: this.bookCount
             })
             .then(() => { this.$router.push('/') })
-            .catch(error => console.log(error))
+            .catch()
         }
+    },
+    created(){
+
     }
 }
 </script>
+
+<style scoped>
+
+.router{
+      text-decoration: none; 
+}
+.button{ margin:3%;}
+
+</style>

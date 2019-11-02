@@ -1,32 +1,17 @@
 <template>
- <div>
-   <div class="container">
-   <div class="row">
-     <div class="col s12 m8 offset-m2">
-       <div class="login card-panel grey lighten-4 black-text center">
-         <h3>Register</h3>
-         <form action="index.html">
-           <div class="input-field">
-             <i class="material-icons prefix">email</i>
-             <input type="email" id="email" v-model="email">
-             <label for="email">Email Address</label>
-           </div>
-           <div class="input-field">
-             <i class="material-icons prefix">lock</i>
-             <input type="password" id="password" v-model="password">
-             <label for="password">Password</label>
-           </div>
-           <button v-on:click="register" class="btn btn-large btn-extended grey lighten-4 black-text">Register</button>
-         </form>
-       </div>
-     </div>
-   </div>
- </div>
- </div>
+  <v-form  @submit.prevent="saveUser">
+        <v-text-field label="Username/Email" v-model="email"></v-text-field>
+        <v-text-field type="password" label="password" v-model="password"></v-text-field>
+
+        <v-btn v-on:click="register" >Register</v-btn>
+
+  </v-form>
 </template>
 
 <script>
 import firebase from 'firebase';
+import {AppDB} from './firebaseInit'
+
 export default {
  name: 'register',
  data: function() {
@@ -43,6 +28,11 @@ export default {
        .then(
          u => {
           // console.log(user);
+
+          AppDB.ref('Users').push().set({
+                Email: this.email,
+            })
+           
            alert(`Account Created for ${u.user.email}`);
            
            this.$router.go({ path: this.$router.path });
@@ -52,6 +42,11 @@ export default {
          }
        );
      e.preventDefault();
+   },
+   saveUser(){
+
+       
+
    }
  }
 };
