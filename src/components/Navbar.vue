@@ -14,7 +14,7 @@
         <v-spacer></v-spacer>
 
         <v-toolbar-items>
-            <v-btn text v-if="isLoggedIn" ><span class="email white-text">{{currentUser}}</span></v-btn>
+            <v-btn text v-if="isLoggedIn"><span class="email white-text">{{currentUser}}</span></v-btn>
             <v-btn text v-if="isLoggedIn"><router-link class="router" to="/">Home</router-link></v-btn>
             <v-btn text v-if="!isLoggedIn"><router-link class="router"  to="/auth">Login</router-link></v-btn>
             <v-btn text v-if="!isLoggedIn"><router-link class="router"  to="/register">Sign Up</router-link></v-btn>

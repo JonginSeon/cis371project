@@ -34,12 +34,14 @@
       </v-list-item-content>
     </v-list-item>
 <v-btn class ="button"> <router-link to="/" class="router"> Back </router-link></v-btn>
-<v-btn class ="button" v-on:click="deleteBook" > Delete </v-btn>
+<v-btn class ="button"  v-if="isAdmin" v-on:click="deleteBook" > Delete </v-btn>
   </v-card>
 
 </template>
 <script>
 import {AppDB} from './firebaseInit'
+import firebase from 'firebase';
+
 export default {
     name: 'view-book',
     data(){
@@ -49,13 +51,15 @@ export default {
             author: null,
             genre: null,
             published: null,
-            bookCount: null
+            bookCount: null,
+            isAdmin: false
         }
     },
     beforeRouteEnter(to, from, next){
         AppDB.ref('Books').on('value', (snapshot) => {
             const data = snapshot.val();
             const keys = Object.keys(data);
+            let isAdmin = false;
 
             let find;
             keys.forEach((key) => {
@@ -65,6 +69,14 @@ export default {
                 }
             });
 
+
+            if(firebase.auth().currentUser){
+              let currentUser = firebase.auth().currentUser.email;
+              if(currentUser === "admin@mail.gvsu.edu"){
+                isAdmin = true;
+              }
+            }
+
             next(vm => {
                 vm.ID = find.ID;
                 vm.title = find.title;
@@ -72,6 +84,7 @@ export default {
                 vm.genre = find.genre;
                 vm.published = find.published;
                 vm.bookCount = find.bookCount;
+                vm.isAdmin = isAdmin;
             })
         })
     },
