@@ -15,7 +15,7 @@
 
         <v-toolbar-items>
             <v-btn text v-if="isLoggedIn"><span class="email white-text">{{currentUser}}</span></v-btn>
-            <v-btn text v-if="isLoggedIn"><router-link class="router" to="/">Home</router-link></v-btn>
+            <v-btn text v-if="(!isAdmin && isLoggedIn)"><router-link class="router" to="/">Home</router-link></v-btn>
             <v-btn text v-if="!isLoggedIn"><router-link class="router"  to="/auth">Login</router-link></v-btn>
             <v-btn text v-if="!isLoggedIn"><router-link class="router"  to="/register">Sign Up</router-link></v-btn>
             <v-btn text v-if="isLoggedIn"><button v-on:click="logout" class="btn white black-text">Logout</button></v-btn>
@@ -42,6 +42,9 @@ export default {
         if(firebase.auth().currentUser){
             this.isLoggedIn = true;
             this.currentUser = firebase.auth().currentUser.email;
+            if(this.currentUser === "admin@mail.gvsu.edu"){
+                this.isAdmin = true;
+            }
         }
     },
     methods: {

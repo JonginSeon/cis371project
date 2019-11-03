@@ -2,7 +2,6 @@
 <template>
 
   <v-card  id="card" class="mx-auto" max-width="400" tile>
-       <h1>{{currentUser}}</h1>
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title>Book ID:  {{ID}}</v-list-item-title>
@@ -35,7 +34,7 @@
       </v-list-item-content>
     </v-list-item>
 <v-btn class ="button"> <router-link to="/" class="router"> Back </router-link></v-btn>
-<v-btn class ="button" v-on:click="deleteBook" > Delete </v-btn>
+<v-btn class ="button" v-on:click="returnBook" > Return Book </v-btn>
   </v-card>
 
 </template>
@@ -44,7 +43,7 @@ import {AppDB} from './firebaseInit'
 import firebase from 'firebase';
 
 export default {
-    name: 'user-new-book',
+    name: 'view-user-book',
     data(){
         return{
             ID: null,
@@ -53,17 +52,18 @@ export default {
             genre: null,
             published: null,
             bookCount: null,
-            currentUser: false,
-            userEmail:[],
             userList:''
         }
     },
     beforeRouteEnter(to, from, next){
 
-
+      
+      let currentUser = firebase.auth().currentUser.email;
+      let userEmail =   currentUser.split("@");
+      let userList= 'User/'+ userEmail[0];
         
 
-        AppDB.ref('Books').on('value', (snapshot) => {
+        AppDB.ref(userList).on('value', (snapshot) => {
             const data = snapshot.val();
             const keys = Object.keys(data);
 
@@ -82,40 +82,50 @@ export default {
                 vm.genre = find.genre;
                 vm.published = find.published;
                 vm.bookCount = find.bookCount;
+                vm.userList = userList;
             })
         })
      
     },
     methods: {
-        deleteBook(){
+        returnBook(){
 
-  if(firebase.auth().currentUser){
-            if(confirm('Are you sure you want to delete this book?')){
+          if(firebase.auth().currentUser){
+            if(confirm('Are you sure you want to return this book now?')){
 
-              
-         
-            this.currentUser = firebase.auth().currentUser.email;
-            this.userEmail =   this.currentUser.split("@")
-            this.userList='User/'+this.userEmail[0];
-
-
-                // alert(this.currentUser)
-                let uID;
-                 AppDB.ref(this.userList).on('value', (snapshot)=>{
+                let uID, bookID;
+                AppDB.ref(this.userList).on('value', (snapshot)=>{
                     const data = snapshot.val();
                     const keys = Object.keys(data);
                     
                     keys.forEach((key) => {
                         let book = data[key];
-                       // console.log(book);
                         if(book.ID == this.$route.params.book_id){
                             uID = key;
+                            bookID = book.ID;
+                            alert(bookID);
                         }
                     });
 
                 })
 
-                AppDB.ref('Books/' + uID).remove();
+                AppDB.ref(this.userList + "/" + uID).remove();
+
+                let count, bookKey;
+                AppDB.ref('Books').on('value', (snapshot) => {
+                  const data = snapshot.val();
+                  const keys = Object.keys(data);
+                  keys.forEach((key) => {
+                    let book = data[key];
+                    if(book.ID == bookID){
+                      count = book.bookCount + 1;
+                      bookKey = key;
+                    }
+                  })
+                })
+
+                 AppDB.ref('Books/'+ bookKey).update({bookCount: count});
+
                 this.$router.push("/");
               }
             }

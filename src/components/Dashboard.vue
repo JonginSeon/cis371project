@@ -1,6 +1,5 @@
 <template>
     <v-simple-table>
-    <h1>{{currentUser}}</h1>
         <v-container class="table">
                 <v-toolbar-title>Admin Books</v-toolbar-title>
             <br><br>
@@ -21,7 +20,7 @@
 
 
   <v-container class="table">
-        <v-toolbar-title>User Books</v-toolbar-title>
+        <v-toolbar-title>Your Checked Out Books</v-toolbar-title>
           <br><br>
         <v-row >
             <v-col >Title</v-col>
@@ -30,7 +29,7 @@
         <v-row v-for="book in books"  v-bind:key="book.id">
             <v-col >   <v-chip >{{book.genre}}</v-chip> {{book.title}}</v-col>
             <v-col> {{book.author}}</v-col>
-            <router-link class="router" v-bind:to="{name: 'user-new-book', params: {book_id: book.ID}}">
+            <router-link class="router" v-bind:to="{name: 'view-user-book', params: {book_id: book.ID}}">
                 <v-icon>mdi-eye</v-icon></router-link> 
         </v-row>
         <br><br>

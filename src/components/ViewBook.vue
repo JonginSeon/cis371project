@@ -35,6 +35,7 @@
     </v-list-item>
 <v-btn class ="button"> <router-link to="/" class="router"> Back </router-link></v-btn>
 <v-btn class ="button"  v-if="isAdmin" v-on:click="deleteBook" > Delete </v-btn>
+<v-btn class ="button"  v-if="!isAdmin" v-on:click="checkOutBook" > Check out this book </v-btn>
   </v-card>
 
 </template>
@@ -52,6 +53,7 @@ export default {
             genre: null,
             published: null,
             bookCount: null,
+            user: null,
             isAdmin: false
         }
     },
@@ -70,8 +72,12 @@ export default {
             });
 
 
+            let user = null;
+
             if(firebase.auth().currentUser){
               let currentUser = firebase.auth().currentUser.email;
+              let userEmail =   currentUser.split("@");
+              user = 'User/'+ userEmail[0];
               if(currentUser === "admin@mail.gvsu.edu"){
                 isAdmin = true;
               }
@@ -85,6 +91,7 @@ export default {
                 vm.published = find.published;
                 vm.bookCount = find.bookCount;
                 vm.isAdmin = isAdmin;
+                vm.user = user;
             })
         })
     },
@@ -109,6 +116,44 @@ export default {
                 AppDB.ref('Books/' + uID).remove();
                 this.$router.push("/admin");
             }
+        },
+        checkOutBook(){
+          if(confirm('Are you sure you want to check out this book?')){
+            let uID;
+                 AppDB.ref('Books').on('value', (snapshot)=>{
+                    const data = snapshot.val();
+                    const keys = Object.keys(data);
+                    
+                    keys.forEach((key) => {
+                        let book = data[key];
+                       // console.log(book);
+                        if(book.ID == this.$route.params.book_id){
+                            uID = key;
+                        }
+                    });
+                })
+
+              let bookTitle, bookAuthor, bookID, bookGenre;
+              let newBookCount;
+              AppDB.ref('Books/' + uID).on('value', (snapshot) => {
+                let data = snapshot.val();
+                newBookCount = data.bookCount - 1;
+                bookTitle = data.title;
+                bookID = data.ID;
+                bookAuthor = data.author;
+                bookGenre = data.genre;
+              });
+
+              if(newBookCount < 0){
+                console.log("No Stock");
+              } 
+              else{
+                AppDB.ref('Books/' + uID).update({bookCount: newBookCount});
+              }
+
+              AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre});
+          }
+              location.reload();
         }      
     }
 }

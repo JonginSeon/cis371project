@@ -73,8 +73,8 @@ let router = new Router({
     },
 
     {
-      path: '/userNewBook',
-      name: 'user-new-book',
+      path: '/ViewCheckedOutBook',
+      name: 'view-user-book',
       component: ViewUserBook,
       meta: {
         requiresAuth: true

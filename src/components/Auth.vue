@@ -2,7 +2,7 @@
 
  <v-form >
       <v-text-field label="Username/Email" v-model="email"></v-text-field>
-      <v-text-field type="password" label="password" v-model="password"></v-text-field>
+      <v-text-field type="password" label="Password" v-model="password"></v-text-field>
       <v-btn v-on:click="login" >Login</v-btn>
 </v-form>
 </template>
