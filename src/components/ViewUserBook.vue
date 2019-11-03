@@ -103,7 +103,7 @@ export default {
                         if(book.ID == this.$route.params.book_id){
                             uID = key;
                             bookID = book.ID;
-                            alert(bookID);
+                            // alert(bookID);
                         }
                     });
 

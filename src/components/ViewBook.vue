@@ -33,11 +33,12 @@
         <v-list-item-title>Stock: {{bookCount}}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-<v-btn class ="button"> <router-link to="/" class="router"> Back </router-link></v-btn>
+<v-btn class ="button"  v-if="isAdmin"> <router-link to="/admin" class="router"> Back </router-link></v-btn>
+<v-btn class ="button" v-if="!isAdmin"> <router-link to="/" class="router"> Back </router-link></v-btn>
+
 <v-btn class ="button"  v-if="isAdmin" v-on:click="deleteBook" > Delete </v-btn>
 <v-btn class ="button"  v-if="!isAdmin" v-on:click="checkOutBook" > Check out this book </v-btn>
   </v-card>
-
 </template>
 <script>
 import {AppDB} from './firebaseInit'
@@ -145,15 +146,17 @@ export default {
               });
 
               if(newBookCount < 0){
-                console.log("No Stock");
+                // dont add anything
+                confirm("OUT OF STOCK");
               } 
               else{
                 AppDB.ref('Books/' + uID).update({bookCount: newBookCount});
+                AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre});
+                location.reload();
               }
 
-              AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre});
           }
-              location.reload();
+             
         }      
     }
 }
