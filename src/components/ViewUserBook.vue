@@ -57,7 +57,7 @@ export default {
     },
     beforeRouteEnter(to, from, next){
 
-      
+
       let currentUser = firebase.auth().currentUser.email;
       let userEmail =   currentUser.split("@");
       let userList= 'User/'+ userEmail[0];
@@ -103,7 +103,7 @@ export default {
                         if(book.ID == this.$route.params.book_id){
                             uID = key;
                             bookID = book.ID;
-                            alert(bookID);
+                            // alert(bookID);
                         }
                     });
 

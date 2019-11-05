@@ -28,9 +28,9 @@ export default {
              // alert("Hello Admin");
              this.$router.push('/admin')
             }
-
-           //alert(`You are logged in as ${this.email}`);
-           this.$router.go({ path: this.$router.path });
+          else{    //alert(`You are logged in as ${this.email}`);
+           this.$router.go({ path: this.$router.path });    }
+          
          },
          err => {
            alert(err.message);

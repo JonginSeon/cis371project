@@ -33,11 +33,14 @@
         <v-list-item-title>Stock: {{bookCount}}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-<v-btn class ="button"> <router-link to="/" class="router"> Back </router-link></v-btn>
+<v-btn class ="button"  v-if="isAdmin"> <router-link to="/admin" class="router"> Back </router-link></v-btn>
+<v-btn class ="button" v-if="!isAdmin"> <router-link to="/" class="router"> Back </router-link></v-btn>
+
 <v-btn class ="button"  v-if="isAdmin" v-on:click="deleteBook" > Delete </v-btn>
 <v-btn class ="button"  v-if="!isAdmin" v-on:click="checkOutBook" > Check out this book </v-btn>
-  </v-card>
+<v-btn class ="button"  v-if="!stock"   v-on:click="waitListFunction" > Waiting list </v-btn>
 
+  </v-card>
 </template>
 <script>
 import {AppDB} from './firebaseInit'
@@ -54,7 +57,14 @@ export default {
             published: null,
             bookCount: null,
             user: null,
-            isAdmin: false
+            userFullEmail:null,
+            isAdmin: false,
+            stock:false,
+            waitList:null,
+            userWaitList:[],
+            askIfExists:false,
+            
+            
         }
     },
     beforeRouteEnter(to, from, next){
@@ -73,9 +83,11 @@ export default {
 
 
             let user = null;
+            let userFullEmail= null;
 
             if(firebase.auth().currentUser){
               let currentUser = firebase.auth().currentUser.email;
+              userFullEmail=currentUser;
               let userEmail =   currentUser.split("@");
               user = 'User/'+ userEmail[0];
               if(currentUser === "admin@mail.gvsu.edu"){
@@ -92,9 +104,11 @@ export default {
                 vm.bookCount = find.bookCount;
                 vm.isAdmin = isAdmin;
                 vm.user = user;
+                vm.userFullEmail=userFullEmail;
             })
         })
     },
+ 
     methods: {
         deleteBook(){
             if(confirm('Are you sure you want to delete this book?')){
@@ -132,7 +146,6 @@ export default {
                         }
                     });
                 })
-
               let bookTitle, bookAuthor, bookID, bookGenre;
               let newBookCount;
               AppDB.ref('Books/' + uID).on('value', (snapshot) => {
@@ -142,18 +155,76 @@ export default {
                 bookID = data.ID;
                 bookAuthor = data.author;
                 bookGenre = data.genre;
-              });
+              if(newBookCount==0){
 
+                    this.stock=true;
+                }
+              });
+             
               if(newBookCount < 0){
-                console.log("No Stock");
+                // dont add anything
+                confirm("OUT OF STOCK");
               } 
               else{
                 AppDB.ref('Books/' + uID).update({bookCount: newBookCount});
+                AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre});
+                 location.reload();
               }
 
-              AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre});
           }
-              location.reload();
+
+        },
+        waitListFunction(){
+            let uID;
+              AppDB.ref('Books').on('value', (snapshot)=>{
+                    const data = snapshot.val();
+                    const keys = Object.keys(data);
+                    
+                    keys.forEach((key) => {
+                        let book = data[key];
+                       // console.log(book);
+                        if(book.ID == this.$route.params.book_id){
+                            uID = key;
+                        }
+                    });
+              })
+
+              AppDB.ref('Books/' + uID+"/WaitList").once("value",snapshot => {
+
+                  if (snapshot.exists()){
+                    const data = snapshot.val();
+                    const keys = Object.keys(data);
+              
+                    keys.forEach((key) => {
+                      
+                      let email = data[key];
+                      // alert(email)
+
+                      if(this.userFullEmail==email){
+                          alert("You are already in Waiting List");
+                          this.askIfExists=false;
+                      }
+                      else{
+                        this.userWaitList.push(email);
+                          this.askIfExists=true;
+                      }
+                    });
+
+                  }
+              }); 
+
+
+            if(this.askIfExists==true){ 
+              AppDB.ref('Books/' + uID+"/WaitList").remove();  
+
+              this.userWaitList.push(this.userFullEmail);
+
+                  // alert(this.userWaitList)
+              AppDB.ref('Books/' + uID).update({
+                  WaitList: this.userWaitList
+                  
+              })
+            }
         }      
     }
 }

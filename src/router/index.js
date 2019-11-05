@@ -8,7 +8,9 @@ import EditBook from '@/components/EditBook'
 import auth from  '@/components/Auth'
 import register from  '@/components/Register'
 import firebase from 'firebase';
-import admin from  '@/components/User'
+import admin from  '@/components/AdminOnly'
+import ViewUser from '@/components/ViewUser'
+
 
 Vue.use(Router)
 
@@ -76,6 +78,14 @@ let router = new Router({
       path: '/ViewCheckedOutBook',
       name: 'view-user-book',
       component: ViewUserBook,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/:user_email',
+      name: 'view-user',
+      component: ViewUser,
       meta: {
         requiresAuth: true
       }

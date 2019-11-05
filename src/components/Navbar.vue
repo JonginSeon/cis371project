@@ -18,7 +18,7 @@
             <v-btn text v-if="(!isAdmin && isLoggedIn)"><router-link class="router" to="/">Home</router-link></v-btn>
             <v-btn text v-if="!isLoggedIn"><router-link class="router"  to="/auth">Login</router-link></v-btn>
             <v-btn text v-if="!isLoggedIn"><router-link class="router"  to="/register">Sign Up</router-link></v-btn>
-            <v-btn text v-if="isLoggedIn"><button v-on:click="logout" class="btn white black-text">Logout</button></v-btn>
+            <v-btn text v-if="isLoggedIn" v-on:click="logout" class="btn white black-text">Logout</v-btn>
         </v-toolbar-items>
         <v-spacer></v-spacer>
 
