@@ -1,0 +1,72 @@
+<template>
+    <v-simple-table>
+        <v-container class="table">
+            <v-toolbar-title>{{user.Email}} Checked Out Books</v-toolbar-title>
+            <br><br>
+            <v-row >
+                <v-col >Title</v-col>
+                <v-col >Author</v-col>
+            </v-row>
+            <v-row v-for="book in books"  v-bind:key="book.id">
+                <v-col >   <v-chip >{{book.genre}}</v-chip> {{book.title}}</v-col>
+                <v-col> {{book.author}}</v-col>
+                <!-- <router-link class="router" v-bind:to="{name: 'view-user-book', params: {book_id: book.ID}}">
+                    <v-icon>mdi-eye</v-icon></router-link>  -->
+            </v-row>
+            <br><br>
+            <!-- <router-link to="/new" class="router"><v-icon>mdi-plus-circle</v-icon></router-link> -->
+        </v-container>
+</v-simple-table>
+
+
+</template>
+
+<script>
+import {AppDB} from './firebaseInit'
+import firebase from 'firebase';
+
+
+export default {
+     name: 'view-user',
+     data(){
+         return{
+
+
+            currentUser: false,
+
+         }
+    },
+    //  beforeRouteEnter(to, from, next){
+
+
+
+
+    //  },
+     created(){
+   if(firebase.auth().currentUser){
+           this.currentUser = firebase.auth().currentUser.email;
+            this.userEmail =   this.currentUser.split("@")
+            this.userList='User/'+this.userEmail[0];
+
+
+
+        AppDB.ref(this.userList).on('value', (snapshot) => {
+            snapshot.forEach((element) => {
+                const data = {
+                    'title': element.val().title,
+                    'author': element.val().author,
+                    'genre': element.val().genre,
+                    'published': element.val().published,
+                    'bookCount': element.val().bookCount,
+                    'ID': element.val().ID
+
+                }
+               
+                this.books.push(data);
+            })
+        })
+        }
+    }
+    
+}
+</script>
