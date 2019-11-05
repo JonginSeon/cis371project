@@ -38,8 +38,11 @@
 
 <v-btn class ="button"  v-if="isAdmin" v-on:click="deleteBook" > Delete </v-btn>
 <v-btn class ="button"  v-if="!isAdmin" v-on:click="checkOutBook" > Check out this book </v-btn>
+<<<<<<< HEAD
 <v-btn class ="button"  v-if="!stock"   v-on:click="waitListFunction" > Waiting list </v-btn>
 
+=======
+>>>>>>> dbc18380d487ff30aba441d3ec30cd55459ef6ac
   </v-card>
 </template>
 <script>
@@ -168,6 +171,7 @@ export default {
               else{
                 AppDB.ref('Books/' + uID).update({bookCount: newBookCount});
                 AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre});
+<<<<<<< HEAD
                  location.reload();
               }
 
@@ -225,6 +229,13 @@ export default {
                   
               })
             }
+=======
+                location.reload();
+              }
+
+          }
+             
+>>>>>>> dbc18380d487ff30aba441d3ec30cd55459ef6ac
         }      
     }
 }
