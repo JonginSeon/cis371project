@@ -37,12 +37,11 @@
 <v-btn class ="button" v-if="!isAdmin"> <router-link to="/" class="router"> Back </router-link></v-btn>
 
 <v-btn class ="button"  v-if="isAdmin" v-on:click="deleteBook" > Delete </v-btn>
-<v-btn class ="button"  v-if="!isAdmin" v-on:click="checkOutBook" > Check out this book </v-btn>
-<<<<<<< HEAD
-<v-btn class ="button"  v-if="!stock"   v-on:click="waitListFunction" > Waiting list </v-btn>
+<v-btn class ="button"  v-if="!isAdmin && bookCount" v-on:click="checkOutBook" > Check out this book </v-btn>
+<v-btn class ="button"  v-if="!bookCount"   v-on:click="waitListFunction" > Waiting list </v-btn>
 
-=======
->>>>>>> dbc18380d487ff30aba441d3ec30cd55459ef6ac
+<h1  v-if="!bookCount" > OUT OF STOCK</h1>
+
   </v-card>
 </template>
 <script>
@@ -62,7 +61,7 @@ export default {
             user: null,
             userFullEmail:null,
             isAdmin: false,
-            stock:false,
+            noStock:false,
             waitList:null,
             userWaitList:[],
             askIfExists:false,
@@ -160,7 +159,7 @@ export default {
                 bookGenre = data.genre;
               if(newBookCount==0){
 
-                    this.stock=true;
+                    this.noStock=true;
                 }
               });
              
@@ -171,7 +170,6 @@ export default {
               else{
                 AppDB.ref('Books/' + uID).update({bookCount: newBookCount});
                 AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre});
-<<<<<<< HEAD
                  location.reload();
               }
 
@@ -206,36 +204,27 @@ export default {
 
                       if(this.userFullEmail==email){
                           alert("You are already in Waiting List");
-                          this.askIfExists=false;
+                          this.askIfExists=true;
                       }
                       else{
                         this.userWaitList.push(email);
-                          this.askIfExists=true;
+                          this.askIfExists=false;
                       }
                     });
 
                   }
               }); 
 
-
-            if(this.askIfExists==true){ 
-              AppDB.ref('Books/' + uID+"/WaitList").remove();  
-
+             if(this.askIfExists==false){ 
+              // AppDB.ref('Books/' + uID+"/WaitList").remove();  
               this.userWaitList.push(this.userFullEmail);
 
                   // alert(this.userWaitList)
-              AppDB.ref('Books/' + uID).update({
+         
+                 AppDB.ref('Books/' + uID).update({
                   WaitList: this.userWaitList
-                  
-              })
-            }
-=======
-                location.reload();
-              }
-
-          }
-             
->>>>>>> dbc18380d487ff30aba441d3ec30cd55459ef6ac
+            
+              })   }
         }      
     }
 }
