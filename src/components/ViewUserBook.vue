@@ -33,6 +33,12 @@
         <v-list-item-title>Stock: {{bookCount}}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+
+    <v-list-item six-line>
+      <v-list-item-content>
+        <v-list-item-title>Due Date: {{dueDate}}</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
 <v-btn class ="button"> <router-link to="/" class="router"> Back </router-link></v-btn>
 <v-btn class ="button" v-on:click="returnBook" > Return Book </v-btn>
   </v-card>
@@ -52,6 +58,7 @@ export default {
             genre: null,
             published: null,
             bookCount: null,
+            dueDate: '',
             userList:''
         }
     },
@@ -83,6 +90,7 @@ export default {
                 vm.published = find.published;
                 vm.bookCount = find.bookCount;
                 vm.userList = userList;
+                vm.dueDate = find.dueDate;
             })
         })
      

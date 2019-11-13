@@ -169,8 +169,11 @@ export default {
               } 
               else{
                 AppDB.ref('Books/' + uID).update({bookCount: newBookCount});
-                AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre});
-                 location.reload();
+                let date = new Date();
+                date.setDate(date.getDate() + 7);
+                AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre, dueDate: date.toLocaleDateString('en-US')});
+                alert("Due Date: " + date);
+                location.reload();
               }
 
           }
