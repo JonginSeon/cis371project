@@ -71,7 +71,7 @@ export default {
 
 
 
-        AppDB.ref(this.userList).on('value', (snapshot) => {
+        AppDB.ref(this.userList).once('value', (snapshot) => {
             snapshot.forEach((element) => {
                 const data = {
                     'title': element.val().title,
@@ -88,7 +88,7 @@ export default {
         })
 
 
-        AppDB.ref('Books').on('value', (snapshot) => {
+        AppDB.ref('Books').once('value', (snapshot) => {
             snapshot.forEach((element) => {
                 const data = {
                     'title': element.val().title,
@@ -108,6 +108,61 @@ export default {
 
 
      }}
+     ,
+     mounted(){
+        //alert("This is inside mounted");
+        AppDB.ref(this.userList).once('value', (snapshot) => {
+            const data = snapshot.val();
+            const keys = Object.keys(data);
+
+            keys.forEach((key) => {
+                let book = data[key];
+                //console.log("Due Date: " + book.dueDate);
+                let dueDate = new Date(book.dueDate);
+                let todaysDate = new Date();
+                let Difference_In_Time = todaysDate.getTime() - dueDate.getTime();
+                let Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+                if(Difference_In_Days > 0){
+                    alert(book.title + " is past due");
+                }
+                if(Difference_In_Days === 0){
+                    alert(book.title + " is due today");
+                }
+
+            })
+        })
+
+        AppDB.ref('Books').once('value', (snapshot) => {
+            const data = snapshot.val();
+            const keys = Object.keys(data);
+
+            keys.forEach((key) => {
+                let book = data[key];
+                if(book.WaitList){
+                    let array = Object.values(book.WaitList);
+                    //console.log(array.length);
+                    for(let i=0; i<array.length; i++){
+                        if(array[i] === firebase.auth().currentUser.email){
+                            alert(book.title + " is back in stock");
+                            let bookKey = key;
+                            let index = array.indexOf(firebase.auth().currentUser.email);
+                            array.splice(index, 1);
+                            console.log(array);
+                            let newObject = Object.assign({}, array);
+                            this.removeUser(bookKey, newObject);
+                        }
+                    }
+                }
+            })
+        })
+     },
+
+     methods:{
+         removeUser(key, WaitList){
+             AppDB.ref('Books/' + key +"/").update({WaitList});
+         }
+     }
 }
 </script>
 

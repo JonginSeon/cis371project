@@ -46,7 +46,7 @@ export default {
         }
     },
     created(){
-        AppDB.ref('Books').on('value', (snapshot) => {
+        AppDB.ref('Books').once('value', (snapshot) => {
             snapshot.forEach((element) => {
                 const data = {
                     'title': element.val().title,
@@ -62,7 +62,7 @@ export default {
         }),
 
 
-        AppDB.ref('Users').on('value', (snapshot) => {
+        AppDB.ref('Users').once('value', (snapshot) => {
                     snapshot.forEach((element) => {
                         const data1 = {
                             'Email': element.val().Email,
