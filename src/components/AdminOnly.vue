@@ -1,12 +1,28 @@
 <template>
+
+ <v-app id="inspire">
+    <v-content>
+      <v-container >
+        <v-layout align-center justify-center>
+          <v-flex >
+            <v-card class="elevation-12">
+              
+            <v-toolbar color="primary" dark flat>
+                <v-toolbar-title>Available Books</v-toolbar-title>     <v-spacer></v-spacer>  <router-link to="/new" class="router"><v-icon>mdi-plus-circle</v-icon></router-link>
+                   
+                    </v-toolbar>
+
     <v-simple-table>
     <!-- book table -->
+    <template  v-slot:default>
     <v-container class="table">
         <v-row >
             <v-col >Title</v-col>
             <v-col >Author</v-col>
             <v-col >Detials</v-col>
         </v-row>
+
+
 
         <v-row v-for="book in books"  v-bind:key="book.id">
             <v-col >   <v-chip >{{book.genre}}</v-chip> {{book.title}}</v-col>
@@ -15,10 +31,36 @@
                 <v-icon>mdi-eye</v-icon></router-link> </v-col>
         </v-row>
         <br><br>
-        <router-link to="/new" class="router"><v-icon>mdi-plus-circle</v-icon></router-link>
-    
+
+</v-container>
+
+  </template>
+
+    </v-simple-table>
+
+     </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>  
+    </v-content>
   
 
+<v-content>
+      <v-container >
+        <v-layout align-center justify-center>
+          <v-flex >
+            <v-card class="elevation-12">
+              
+ <v-toolbar color="primary" dark flat>
+                <v-toolbar-title>All Users</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                    </v-toolbar>
+
+
+    <v-simple-table>
+    <!-- book table -->
+    <template  v-slot:default>
+  <v-container class="table">
     <!-- user table -->
         <v-row >
             <v-col >user email</v-col>
@@ -30,8 +72,34 @@
     <v-col> <router-link class="router" v-bind:to="{name: 'view-user', params: {user_email: user.Email}}">
                 <v-icon>mdi-eye</v-icon></router-link> </v-col>
  </v-row>
+ 
+ 
   </v-container>
+  
+
+  </template>
+
     </v-simple-table>
+
+     </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>  
+    </v-content>
+
+
+
+  </v-app>
+
+  
+
+
+
+
+
+
+
+  
 </template>
 
 
@@ -89,4 +157,5 @@ export default {
 .table{
     width:70vw;
 }
+
 </style>

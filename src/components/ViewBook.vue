@@ -1,6 +1,19 @@
 
 <template>
-  <v-card  id="card" class="mx-auto" max-width="400" tile>
+ <v-app id="inspire">
+    <v-content>
+      <v-container >
+        <v-layout align-center justify-center>
+          <v-flex xs12 sm8 md4>
+            <v-card class="elevation-12">
+
+               <v-toolbar color="primary" dark flat>
+                <v-toolbar-title>Book Information</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                    </v-toolbar>
+
+
+  <!-- <v-card  id="card" class="mx-auto" max-width="400" tile> -->
       
     <v-list-item>
       <v-list-item-content>
@@ -33,16 +46,71 @@
         <v-list-item-title>Stock: {{bookCount}}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-<v-btn class ="button"  v-if="isAdmin"> <router-link to="/admin" class="router"> Back </router-link></v-btn>
-<v-btn class ="button" v-if="!isAdmin"> <router-link to="/" class="router"> Back </router-link></v-btn>
+ <router-link to="/admin" class="router"><v-btn class ="button"  v-if="isAdmin"> Back </v-btn></router-link>
+<router-link to="/" class="router"><v-btn class ="button" v-if="!isAdmin">  Back </v-btn></router-link>
 
-<v-btn class ="button"  v-if="isAdmin" v-on:click="deleteBook" > Delete </v-btn>
-<v-btn class ="button"  v-if="!isAdmin && bookCount" v-on:click="checkOutBook" > Check out this book </v-btn>
-<v-btn class ="button"  v-if="!bookCount"   v-on:click="waitListFunction" > Waiting list </v-btn>
+<v-btn class ="button"  v-if="isAdmin" v-on:click="deleteAlert" > Delete </v-btn>
 
-<h1  v-if="!bookCount" > OUT OF STOCK</h1>
 
-  </v-card>
+<v-btn class ="button"  v-if="!isAdmin && bookCount" v-on:click="duedate" > Check out this book </v-btn>
+ 
+
+<v-btn class ="button"  v-if="!bookCount &&!isAdmin"   v-on:click="waitListFunction" > Waiting list </v-btn>
+
+  <v-alert type="error" v-if="!bookCount"> 
+  This book is currently out of stock
+    </v-alert>
+
+ <v-dialog v-model="dialog1" max-width="290">
+      <v-card>
+        <v-card-title class="headline">Comfirm</v-card-title>
+
+        <v-card-text>
+      Are you sure you want to delete this book?
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="green darken-1" text @click="dialog1 = false"> No </v-btn>
+          <v-btn color="green darken-1" text  dark v-on="on"    v-on:click="deleteBook"  >Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
+
+  
+    <v-dialog v-model="dialog" max-width="290">
+      <v-card>
+        <v-card-title class="headline">Comfirm</v-card-title>
+
+        <v-card-text>
+       Would you like to check out this book? Your return date woud be {{date}}
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="green darken-1" text @click="dialog = false"> No </v-btn>
+          <v-btn color="green darken-1" text  dark v-on="on"    v-on:click="checkOutBook"  >Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
+
+
+
+
+
+</v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>  
+    </v-content>
+  
+  </v-app>
 </template>
 <script>
 import {AppDB} from './firebaseInit'
@@ -52,6 +120,8 @@ export default {
     name: 'view-book',
     data(){
         return{
+            dialog: false,
+            dialog1: false,
             ID: null,
             title: null,
             author: null,
@@ -60,16 +130,20 @@ export default {
             bookCount: null,
             user: null,
             userFullEmail:null,
-            isAdmin: false,
+            isAdmin: true,
             noStock:false,
             waitList:null,
             userWaitList:[],
             askIfExists:false,
+            date:null
             
             
         }
     },
     beforeRouteEnter(to, from, next){
+        let dialog = false;
+        let dialog1 = false;
+       let date ;
         AppDB.ref('Books').on('value', (snapshot) => {
             const data = snapshot.val();
             const keys = Object.keys(data);
@@ -107,13 +181,28 @@ export default {
                 vm.isAdmin = isAdmin;
                 vm.user = user;
                 vm.userFullEmail=userFullEmail;
+                vm.dialog = dialog;
+                vm.dialog1 = dialog1;
+                vm.date = date;
             })
         })
     },
  
     methods: {
+
+        duedate(){
+   this.dialog = true;
+              this.date = new Date();
+           
+                this.date.setDate(this.date.getDate() + 7);
+
+        },
+        deleteAlert(){
+          this.dialog1 =true;
+        },
         deleteBook(){
-            if(confirm('Are you sure you want to delete this book?')){
+        
+           
                 let uID;
                  AppDB.ref('Books').on('value', (snapshot)=>{
                     const data = snapshot.val();
@@ -131,10 +220,11 @@ export default {
 
                 AppDB.ref('Books/' + uID).remove();
                 this.$router.push("/admin");
-            }
+            
         },
         checkOutBook(){
-          if(confirm('Are you sure you want to check out this book?')){
+         
+          if(this.dialog){
             let uID;
                  AppDB.ref('Books').on('value', (snapshot)=>{
                     const data = snapshot.val();
@@ -168,11 +258,12 @@ export default {
                 confirm("OUT OF STOCK");
               } 
               else{
+
                 AppDB.ref('Books/' + uID).update({bookCount: newBookCount});
                 let date = new Date();
                 date.setDate(date.getDate() + 7);
                 AppDB.ref(this.user).push().set({ID : bookID, title: bookTitle, author: bookAuthor, genre: bookGenre, dueDate: date.toLocaleDateString('en-US')});
-                alert("Due Date: " + date);
+                // alert("Due Date: " + date);
                 location.reload();
               }
 
@@ -206,6 +297,7 @@ export default {
                       // alert(email)
 
                       if(this.userFullEmail==email){
+                        
                           alert("You are already in Waiting List");
                           this.askIfExists=true;
                       }

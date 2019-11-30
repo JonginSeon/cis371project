@@ -1,7 +1,25 @@
 <template>
+   
+   
+ <v-app id="inspire">
+    <v-content>
+      <v-container >
+        <v-layout align-center justify-center>
+          <v-flex >
+            <v-card class="elevation-12">
+              
+            <v-toolbar color="primary" dark flat>
+                <v-toolbar-title>Available Books</v-toolbar-title>     <v-spacer></v-spacer> 
+                   
+                    </v-toolbar>
+
+   
+   
+   
+   
     <v-simple-table>
         <v-container class="table">
-                <v-toolbar-title>Admin Books</v-toolbar-title>
+       
             <br><br>
         <v-row >
             <v-col >Title</v-col>
@@ -19,8 +37,34 @@
     </v-container>
 
 
+    </v-simple-table>
+
+
+
+     </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>  
+    </v-content>
+
+
+
+
+<v-content>
+      <v-container >
+        <v-layout align-center justify-center>
+          <v-flex >
+            <v-card class="elevation-12">
+              
+ <v-toolbar color="primary" dark flat>
+                <v-toolbar-title>Your Checked Out Books</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                    </v-toolbar>
+
+
+   <v-simple-table>
+
   <v-container class="table">
-        <v-toolbar-title>Your Checked Out Books</v-toolbar-title>
           <br><br>
         <v-row >
             <v-col >Title</v-col>
@@ -33,16 +77,31 @@
                 <v-icon>mdi-eye</v-icon></router-link> 
         </v-row>
         <br><br>
-        <router-link to="/new" class="router"><v-icon>mdi-plus-circle</v-icon></router-link>
+        <!-- <router-link to="/new" class="router"><v-icon>mdi-plus-circle</v-icon></router-link> -->
     
     </v-container>
-
-
 
     </v-simple-table>
 
 
+  <v-alert type="error" v-if="alertForPastDue"> 
+{{pastDue}} is past due return it now
+    </v-alert>
 
+    
+  <v-alert type="error" v-if="alertForDueToday"> 
+  {{dueToday}} is due today
+    </v-alert>
+
+
+
+     </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>  
+    </v-content>
+
+  </v-app>
 </template>
 
 
@@ -57,7 +116,11 @@ export default {
             books: [],
             currentUser: false,
             userEmail:[],
-            userList:''
+            userList:'',
+            alertForDueToday:false,
+            alertForPastDue:false,
+            dueToday:'',
+            pastDue:''
         }
     },
 
@@ -124,10 +187,14 @@ export default {
                 let Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
 
                 if(Difference_In_Days > 0){
-                    alert(book.title + " is past due");
+                   this.alertForPastDue = true;
+                   this.pastDue = book.title;
+                    // alert(book.title + " is past due");
                 }
                 if(Difference_In_Days === 0){
-                    alert(book.title + " is due today");
+                   this.dueToday = book.title;
+                    this.alertForDueToday = true;
+                  //  alert(book.title + " is due today");
                 }
 
             })
@@ -148,7 +215,7 @@ export default {
                             let bookKey = key;
                             let index = array.indexOf(firebase.auth().currentUser.email);
                             array.splice(index, 1);
-                            console.log(array);
+                            // console.log(array);
                             let newObject = Object.assign({}, array);
                             this.removeUser(bookKey, newObject);
                         }

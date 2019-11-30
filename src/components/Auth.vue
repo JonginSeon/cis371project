@@ -1,10 +1,31 @@
 <template>
-
+ <v-app id="inspire">
+    <v-content>
+      <v-container >
+        <v-layout align-center justify-center>
+          <v-flex xs12 sm8 md4>
+            <v-card class="elevation-12">
+              
+              <v-toolbar color="primary" dark flat>
+                <v-toolbar-title>Login</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                    </v-toolbar>
+                         <v-card-text>
  <v-form >
       <v-text-field label="Username/Email" v-model="email"></v-text-field>
       <v-text-field type="password" label="Password" v-model="password"></v-text-field>
       <v-btn v-on:click="login" >Login</v-btn>
 </v-form>
+   </v-card-text>
+   </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>  
+    </v-content>
+  
+  </v-app>
+
+
 </template>
 
 <script>
@@ -31,39 +52,8 @@ export default {
             }
           else{    //alert(`You are logged in as ${this.email}`);
 
-// const nodemailer = require("nodemailer");
-
-
-
-//    let transporter = nodemailer.createTransport({
-//        service: 'gmail',
-//        port: 25,
-//        secure: false, // true for 465, false for other ports
-//        auth: {
-//            user: "seonj", // generated ethereal user
-//            pass: "School123" // generated ethereal password
-//        },
-//        tls:{
-//          rejectUnauthorized: false
-//        }
-//    });
-
-//    let HelperOption ={
-//     from:'"Jongin Seon" <seonj@mail.gvsu.edu',
-//     to: 'seonj@mail.gvsu.edu',
-//      subject: 'test email',
-//        text: 'Hello world?'
-       
-
-//    }
-// transporter.sendMail(HelperOption, (error,info)=>{
-
-//   if(error){return alert(error);}
-
-// })
-
-
-           this.$router.go({ path: this.$router.path });    }
+           this.$router.go({ path: this.$router.path });
+               }
           
          },
          err => {
