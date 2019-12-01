@@ -1,48 +1,89 @@
 
 <template>
 
-  <v-card  id="card" class="mx-auto" max-width="400" tile>
-    <v-list-item>
+ <v-app id="inspire" >
+    <v-content >
+      <v-container >
+        <v-layout align-center justify-center>
+      
+            <v-card id="vCard" class="elevation-12" width="450" >
+
+               <v-toolbar class ="toolbar" color="primary" dark flat>
+                <v-toolbar-title id ="title"> Your {{title}}  Information </v-toolbar-title>
+                        <v-spacer></v-spacer>
+                    </v-toolbar>
+
+
+
+  <!-- <v-card  id="card" class="mx-auto" max-width="400" tile> -->
+    <v-list-item class ="vList">
       <v-list-item-content>
         <v-list-item-title>Book ID:  {{ID}}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
 
-    <v-list-item two-line>
+        <v-list-item two-line class ="vList">
+      <v-list-item-content>
+        <v-list-item-title>Title:  {{title}}</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    
+
+    <v-list-item three-line class ="vList">
       <v-list-item-content>
         <v-list-item-title>Author: {{author}}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
 
-    <v-list-item three-line>
+    <v-list-item four-line class ="vList">
       <v-list-item-content>
         <v-list-item-title>Genre: {{genre}}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
 
 
-    <v-list-item four-line>
-      <v-list-item-content>
-        <v-list-item-title>Date of Publication: {{published}}</v-list-item-title>
-      </v-list-item-content>
-    </v-list-item>
-
-
-    <v-list-item five-line>
-      <v-list-item-content>
-        <v-list-item-title>Stock: {{bookCount}}</v-list-item-title>
-      </v-list-item-content>
-    </v-list-item>
-
-    <v-list-item six-line>
+    <v-list-item five-line class ="vList">
       <v-list-item-content>
         <v-list-item-title>Due Date: {{dueDate}}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-<v-btn class ="button"> <router-link to="/" class="router"> Back </router-link></v-btn>
-<v-btn class ="button" v-on:click="returnBook" > Return Book </v-btn>
+      <br>
+<router-link to="/" class="router"><v-btn class ="button">  Back </v-btn></router-link>
+
+
+
+<v-btn class ="button" @click.stop="dialog = true"  > Return Book </v-btn>
+
+
+
+  
+    <v-dialog v-model="dialog" max-width="290">
+      <v-card>
+        <v-card-title class="headline">Comfirm</v-card-title>
+
+        <v-card-text>
+       Are you sure you want to return this book?
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="green darken-1" text @click="dialog = false"> No </v-btn>
+          <v-btn color="green darken-1" text  dark @click="returnBook" >Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
+
   </v-card>
 
+
+
+        </v-layout>
+      </v-container>  
+    </v-content>
+  </v-app>
 </template>
 <script>
 import {AppDB} from './firebaseInit'
@@ -52,19 +93,21 @@ export default {
     name: 'view-user-book',
     data(){
         return{
+           dialog: false,
             ID: null,
             title: null,
             author: null,
             genre: null,
             published: null,
             bookCount: null,
+            bookKey :null,
             dueDate: '',
             userList:''
         }
     },
     beforeRouteEnter(to, from, next){
 
-
+     let  dialog =false; 
       let currentUser = firebase.auth().currentUser.email;
       let userEmail =   currentUser.split("@");
       let userList= 'User/'+ userEmail[0];
@@ -72,6 +115,11 @@ export default {
 
         AppDB.ref(userList).on('value', (snapshot) => {
             const data = snapshot.val();
+               if(data ==null){
+                 // alert("nothing");
+                  return;
+                    }
+
             const keys = Object.keys(data);
 
             let find;
@@ -91,19 +139,27 @@ export default {
                 vm.bookCount = find.bookCount;
                 vm.userList = userList;
                 vm.dueDate = find.dueDate;
+                 vm.dialog=dialog;
             })
         })
      
     },
     methods: {
         returnBook(){
-
+            
           if(firebase.auth().currentUser){
-            if(confirm('Are you sure you want to return this book now?')){
-
+       
+              
                 let uID, bookID;
                 AppDB.ref(this.userList).on('value', (snapshot)=>{
                     const data = snapshot.val();
+
+                if(data ==null){
+                 // alert("nothing");
+                  return;
+                    }
+
+
                     const keys = Object.keys(data);
                     
                     keys.forEach((key) => {
@@ -111,7 +167,7 @@ export default {
                         if(book.ID == this.$route.params.book_id){
                             uID = key;
                             bookID = book.ID;
-                            // alert(bookID);
+                        
                         }
                     });
 
@@ -120,22 +176,29 @@ export default {
                 AppDB.ref(this.userList + "/" + uID).remove();
 
                 let count, bookKey;
-                AppDB.ref('Books').on('value', (snapshot) => {
+                AppDB.ref('Books').once('value', (snapshot) => {
                   const data = snapshot.val();
                   const keys = Object.keys(data);
+                  
                   keys.forEach((key) => {
                     let book = data[key];
                     if(book.ID == bookID){
+                       
                       count = book.bookCount + 1;
                       bookKey = key;
+
+
+
                     }
-                  })
+                  })  
+                        AppDB.ref('Books/'+ bookKey).update({bookCount: count});
+
+  
                 })
 
-                 AppDB.ref('Books/'+ bookKey).update({bookCount: count});
-
+     
                 this.$router.push("/");
-              }
+              
             }
         }      
     }
@@ -144,15 +207,22 @@ export default {
 <style scoped>
 
 
-#card {
-        margin: 0 auto; /* Added */
-        float: none; /* Added */
-        margin-bottom: 10px; /* Added */
+#vCard{
+ 
 }
 .router{
       text-decoration: none; 
 }
 .button{
     margin:3%;
+}
+
+.vList{
+
+  margin-left:3%;
+
+}
+#title{
+  margin: 3%;
 }
 </style>

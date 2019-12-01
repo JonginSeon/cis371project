@@ -1,7 +1,22 @@
 <template>
+
+   
+ <v-app id="inspire">
+    <v-content>
+      <v-container >
+        <v-layout align-center justify-center>
+          <v-flex >
+            <v-card class="elevation-12">
+              
+            <v-toolbar color="primary" dark flat>
+                <v-toolbar-title>Checked Out Books</v-toolbar-title>     <v-spacer></v-spacer> 
+                   
+                    </v-toolbar>
+
+
     <v-simple-table>
         <v-container class="table">
-            <v-toolbar-title>Checked Out Books</v-toolbar-title>
+          
             <br><br>
             <v-row >
                 <v-col >Title</v-col>
@@ -16,9 +31,19 @@
             <br><br>
             <!-- <router-link to="/new" class="router"><v-icon>mdi-plus-circle</v-icon></router-link> -->
         </v-container>
+
+
+
+
 </v-simple-table>
 
+ </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>  
+    </v-content>
 
+ </v-app>
 </template>
 
 <script>
@@ -40,10 +65,6 @@ export default {
             let user =   to.params.user_email.split("@");
             user= user[0];
 
-            console.log(user);
-
-
-
         AppDB.ref('User/'+user).on('value', (snapshot) => {
           
             const data = snapshot.val();
@@ -55,11 +76,11 @@ export default {
                 
                 arrayBooks.push(book);
 
+
                 })
                     next(vm => {
                 vm.checkedOutBooks=arrayBooks;
-                 console.log(vm.checkedOutBooks);
-                //   console.log(vm);
+            
               })
         });
  
