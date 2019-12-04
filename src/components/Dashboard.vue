@@ -39,6 +39,9 @@
 
     </v-simple-table>
 
+    <v-alert type="info" v-if="alertForOutOfStock"> 
+  {{bookName}} is back stock
+    </v-alert>
 
 
      </v-card>
@@ -95,6 +98,7 @@
 
 
 
+
      </v-card>
           </v-flex>
         </v-layout>
@@ -121,7 +125,9 @@ export default {
             alertForPastDue:false,
             pastDueBooks:[],
             dueToday:'',
-            pastDue:''
+            pastDue:'',
+            bookName:'',
+            alertForOutOfStock:false
         }
     },
 
@@ -220,13 +226,20 @@ export default {
                     //console.log(array.length);
                     for(let i=0; i<array.length; i++){
                         if(array[i] === firebase.auth().currentUser.email){
-                            alert(book.title + " is back in stock");
+
+                         
                             let bookKey = key;
                             let index = array.indexOf(firebase.auth().currentUser.email);
                             array.splice(index, 1);
-                            // console.log(array);
+                            // console.log(array);'
+                            if(book.bookCount !=0){ 
+                                // alert("pass");
+                                this.bookName = book.title;
+                                this.alertForOutOfStock=true;
+                                //alert(book.title + " is back in stock");
                             let newObject = Object.assign({}, array);
                             this.removeUser(bookKey, newObject);
+                        }
                         }
                     }
                 }

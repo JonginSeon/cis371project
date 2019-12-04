@@ -55,7 +55,7 @@
 <v-btn class ="button"  v-if="!isAdmin && bookCount" v-on:click="duedate" > Check out this book </v-btn>
  
 
-<v-btn class ="button"  v-if="!bookCount &&!isAdmin"   v-on:click="waitListFunction" > Waiting list </v-btn>
+<v-btn class ="button"  v-if="!bookCount &&!isAdmin"   v-on:click="waitListAlert" > Waiting list </v-btn>
 
   <v-alert type="error" v-if="!bookCount"> 
   This book is currently out of stock
@@ -100,6 +100,24 @@
 
 
 
+    <v-dialog v-model="dialog2" max-width="290">
+      <v-card>
+        <v-card-title class="headline">Comfirm</v-card-title>
+
+        <v-card-text>
+       Would you like to get notified when book is available? 
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="green darken-1" text @click="dialog2 = false"> No </v-btn>
+          <v-btn color="green darken-1" text  dark      @click="waitListFunction"  >Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
 
 
 
@@ -120,6 +138,7 @@ export default {
     name: 'view-book',
     data(){
         return{
+           dialog2: false,
             dialog: false,
             dialog1: false,
             ID: null,
@@ -142,6 +161,7 @@ export default {
     },
     beforeRouteEnter(to, from, next){
         let dialog = false;
+        let dialog2 = false;
         let dialog1 = false;
        let date ;
         AppDB.ref('Books').on('value', (snapshot) => {
@@ -182,6 +202,7 @@ export default {
                 vm.user = user;
                 vm.userFullEmail=userFullEmail;
                 vm.dialog = dialog;
+                vm.dialog2 = dialog2;
                 vm.dialog1 = dialog1;
                 vm.date = date;
             })
@@ -270,6 +291,9 @@ export default {
           }
 
         },
+        waitListAlert(){
+          this.dialog2=true;
+        },
         waitListFunction(){
             let uID;
               AppDB.ref('Books').on('value', (snapshot)=>{
@@ -298,7 +322,7 @@ export default {
 
                       if(this.userFullEmail==email){
                         
-                          alert("You are already in Waiting List");
+                      //    alert("You are already in Waiting List");
                           this.askIfExists=true;
                       }
                       else{
@@ -320,6 +344,8 @@ export default {
                   WaitList: this.userWaitList
             
               })   }
+              this.dialog2=false;
+              this.$router.push("/");
         }      
     }
 }

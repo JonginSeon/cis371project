@@ -187,16 +187,13 @@ export default {
                       count = book.bookCount + 1;
                       bookKey = key;
 
-
-
                     }
                   })  
                         AppDB.ref('Books/'+ bookKey).update({bookCount: count});
-
   
                 })
 
-     
+    
                 this.$router.push("/");
               
             }
