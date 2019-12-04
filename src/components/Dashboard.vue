@@ -72,6 +72,8 @@
         <v-row >
             <v-col >Title</v-col>
             <v-col >Author</v-col>
+          
+
         </v-row>
         <v-row v-for="book in books"  v-bind:key="book.id">
             <v-col >   <v-chip >{{book.genre}}</v-chip> {{book.title}}</v-col>
