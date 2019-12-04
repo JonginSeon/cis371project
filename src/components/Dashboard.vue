@@ -39,7 +39,7 @@
 
     </v-simple-table>
 
-    <v-alert type="info" v-if="alertForOutOfStock"> 
+    <v-alert type="success" v-if="alertForOutOfStock"> 
   {{bookName}} is back stock
     </v-alert>
 
