@@ -68,20 +68,23 @@ export default {
         AppDB.ref('User/'+user).on('value', (snapshot) => {
           
             const data = snapshot.val();
-                const keys = Object.keys(data);
-                let arrayBooks = [];
-           
-                keys.forEach((key) => {
-                let book = data[key];
-                
-                arrayBooks.push(book);
-
-
-                })
-                    next(vm => {
-                vm.checkedOutBooks=arrayBooks;
+            if(data === null){
+                return;
+            }
+            const keys = Object.keys(data);
+            let arrayBooks = [];
+        
+            keys.forEach((key) => {
+            let book = data[key];
             
-              })
+            arrayBooks.push(book);
+
+
+            })
+                next(vm => {
+            vm.checkedOutBooks=arrayBooks;
+        
+            })
         });
  
      },

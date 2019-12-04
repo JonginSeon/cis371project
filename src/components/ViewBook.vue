@@ -55,7 +55,7 @@
 <v-btn class ="button"  v-if="!isAdmin && bookCount" v-on:click="duedate" > Check out this book </v-btn>
  
 
-<v-btn class ="button"  v-if="!bookCount &&!isAdmin"   v-on:click="waitListAlert" > Waiting list </v-btn>
+<v-btn class ="button"  v-if="!bookCount &&!isAdmin"   v-on:click="waitListAlert" > Add me to the WaitList </v-btn>
 
   <v-alert type="error" v-if="!bookCount"> 
   This book is currently out of stock
@@ -63,7 +63,7 @@
 
  <v-dialog v-model="dialog1" max-width="290">
       <v-card>
-        <v-card-title class="headline">Comfirm</v-card-title>
+        <v-card-title class="headline">Confirm</v-card-title>
 
         <v-card-text>
       Are you sure you want to delete this book?
@@ -83,7 +83,7 @@
   
     <v-dialog v-model="dialog" max-width="290">
       <v-card>
-        <v-card-title class="headline">Comfirm</v-card-title>
+        <v-card-title class="headline">Confirm</v-card-title>
 
         <v-card-text>
        Would you like to check out this book? Your return date woud be {{date}}
@@ -102,7 +102,7 @@
 
     <v-dialog v-model="dialog2" max-width="290">
       <v-card>
-        <v-card-title class="headline">Comfirm</v-card-title>
+        <v-card-title class="headline">Confirm</v-card-title>
 
         <v-card-text>
        Would you like to get notified when book is available? 
@@ -212,10 +212,10 @@ export default {
     methods: {
 
         duedate(){
-   this.dialog = true;
+              this.dialog = true;
               this.date = new Date();
            
-                this.date.setDate(this.date.getDate() + 7);
+              this.date.setDate(this.date.getDate() + 7);
 
         },
         deleteAlert(){
@@ -345,7 +345,7 @@ export default {
             
               })   }
               this.dialog2=false;
-              this.$router.push("/");
+              //this.$router.push("/");
         }      
     }
 }

@@ -19,7 +19,7 @@
         <v-row >
             <v-col >Title</v-col>
             <v-col >Author</v-col>
-            <v-col >Detials</v-col>
+            <v-col >Details</v-col>
         </v-row>
 
 
@@ -64,7 +64,7 @@
     <!-- user table -->
         <v-row >
             <v-col >user email</v-col>
-            <v-col >Detials</v-col>
+            <v-col >Details</v-col>
         </v-row>
 
 <v-row v-for="user in users"  v-bind:key="user.Email">
@@ -90,15 +90,6 @@
 
 
   </v-app>
-
-  
-
-
-
-
-
-
-
   
 </template>
 
